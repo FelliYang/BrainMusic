@@ -1,6 +1,8 @@
 package com.brainmusic;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
@@ -9,13 +11,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
+import com.brainmusic.adapter.MusicListAdapter;
 import com.brainmusic.db.Music;
 import com.brainmusic.util.DBUtil;
 
 import org.litepal.LitePal;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
@@ -23,6 +28,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private MediaPlayer mediaPlayer;
     private DBUtil dbUtil;
     Button play,pause, reset;
+    RecyclerView musicList;
+    MusicListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +38,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initLayout();
         initMediaPlayer(); //初始化MediaPlayer
         initDataBase(); //初始化数据库
-        checkDataBase();//验证数据库是否有效
+        showMusicList();
+
+//        checkDataBase();//验证数据库是否有效
 
     }
+
+
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -45,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     void initLayout(){
         //初始化组件
+        musicList = findViewById(R.id.musicList);
         play = findViewById(R.id.start);
         pause = findViewById(R.id.pause);
         reset = findViewById(R.id.reset);
@@ -57,6 +70,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         play.setOnClickListener(this);
         reset.setOnClickListener(this);
         pause.setOnClickListener(this);
+
+        //初始化musicList
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        musicList.setLayoutManager(layoutManager);
+        adapter = new MusicListAdapter(new ArrayList<Music>());
+        musicList.setAdapter(adapter);
+
     }
 
     /**
@@ -68,6 +88,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dbUtil.initMusicLibrary();
 
 
+    }
+
+    private void showMusicList() {
+        adapter.mMusicList.clear();
+        List<Music> list = LitePal.findAll(Music.class);
+        adapter.mMusicList.addAll(list);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
