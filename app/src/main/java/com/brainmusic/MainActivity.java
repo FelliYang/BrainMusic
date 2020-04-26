@@ -6,14 +6,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.brainmusic.adapter.MusicListAdapter;
+import com.brainmusic.custom.MusicPlayer;
 import com.brainmusic.db.Music;
 import com.brainmusic.util.DBUtil;
 
@@ -25,18 +27,19 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     private static final String TAG = "MainActivity";
-    private MediaPlayer mediaPlayer;
+    public MusicPlayer musicPlayer;
     private DBUtil dbUtil;
     Button play,pause, reset;
     RecyclerView musicList;
     MusicListAdapter adapter;
+    public ImageView pauseOrPlay; //播放、暂停按钮
+    public TextView musicName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initLayout();
-        initMediaPlayer(); //初始化MediaPlayer
         initDataBase(); //初始化数据库
         showMusicList();
 
@@ -49,9 +52,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mediaPlayer!=null){
-            mediaPlayer.stop();
-            mediaPlayer.release();
+        if(musicPlayer !=null){
+            musicPlayer.release();
         }
     }
 
@@ -61,8 +63,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         play = findViewById(R.id.start);
         pause = findViewById(R.id.pause);
         reset = findViewById(R.id.reset);
+        pauseOrPlay = findViewById(R.id.pause_or_paly);
+        musicName = findViewById(R.id.music_name);
         //初始化音乐播放器
-        mediaPlayer = new MediaPlayer();
+        musicPlayer = new MusicPlayer();
         //初始化数据库工具类
         dbUtil = new DBUtil(this);
 
@@ -70,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         play.setOnClickListener(this);
         reset.setOnClickListener(this);
         pause.setOnClickListener(this);
+        pauseOrPlay.setOnClickListener(this);
 
         //初始化musicList
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -101,17 +106,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.start:
-                if(!mediaPlayer.isPlaying())
-                    mediaPlayer.start();
+                if(!musicPlayer.isPlaying())
+                    musicPlayer.start();
                 break;
             case R.id.pause:
-                if(mediaPlayer.isPlaying())
-                    mediaPlayer.pause();
+                if(musicPlayer.isPlaying())
+                    musicPlayer.pause();
                 break;
             case R.id.reset:
-                if(mediaPlayer.isPlaying()){
-                    mediaPlayer.reset(); //重置
-                    initMediaPlayer();
+                if(musicPlayer.isPlaying()){
+                    musicPlayer.reset(); //重置
+//                    initMediaPlayer();
+                }
+                break;
+            case R.id.pause_or_paly:
+                if(musicPlayer.status==MusicPlayer.START){
+                    musicPlayer.pause();
+                    pauseOrPlay.setImageDrawable(getResources().getDrawable(R.drawable.play));
+                }else if(musicPlayer.status==MusicPlayer.PAUSE){
+                    musicPlayer.start();
+                    pauseOrPlay.setImageDrawable(getResources().getDrawable(R.drawable.pause));
                 }
                 break;
             default:
@@ -120,14 +134,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     }
-    private void initMediaPlayer(){
+
+    /**
+     * 使用指定路径的mp3文件初始化mediaPlayer
+     * @param musicFilePath
+     */
+    public void initMediaPlayer(String musicFilePath){
         try{
+            musicPlayer.reset();
             AssetManager assetManager = getAssets();
-            AssetFileDescriptor afd = assetManager.openFd("Music/Collective - Missing.mp3");
-            mediaPlayer.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(), afd.getLength()); //指定播放音频的路径
-            mediaPlayer.prepare(); //进入到准备状态
+            AssetFileDescriptor afd = assetManager.openFd(musicFilePath);
+            musicPlayer.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(), afd.getLength()); //指定播放音频的路径
+            musicPlayer.prepare(); //进入到准备状态
+            musicPlayer.setLooping(true); //循环播放
         }catch(IOException e){
-            Log.e(TAG, "initMediaPlayer: there is some error");
+            Toast.makeText(this, "音乐文件无法播放", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }

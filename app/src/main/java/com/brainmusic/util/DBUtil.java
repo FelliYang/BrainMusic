@@ -60,7 +60,8 @@ public class DBUtil {
             if (file.endsWith(".mp3")) {
                 //添加音乐到数据库
                 Music music = new Music();
-                music.setName(file);
+                String fileName = file.substring(0,file.length()-4);
+                music.setName(fileName);
                 music.setPath(directory+"/"+file);
                 music.save();
             } else {
