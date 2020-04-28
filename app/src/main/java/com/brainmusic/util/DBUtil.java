@@ -81,7 +81,7 @@ public class DBUtil {
      * @return
      */
     public List<Music> getMusicWithEasyStatus(){
-        List<Music> res =  LitePal.order("easyStatus desc").limit(8).find(Music.class);
+        List<Music> res =  LitePal.order("easyStatus desc").limit(9).find(Music.class);
         List<Music> tmp = LitePal.where("easyStatus = ?","0").limit(2).find(Music.class);
         if(!tmp.isEmpty()){
             if(res.isEmpty()) {
