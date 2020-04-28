@@ -2,14 +2,16 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="50dp"
+    android:layout_height="60dp"
+    android:background="@color/colorBG"
     xmlns:tools="http://schemas.android.com/tools">
     <View
         android:id="@+id/line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#56000000"
+        android:background="#191970"
         android:alpha="0.4"
+        android:color="#000080"
         app:layout_constraintTop_toTopOf="parent"/>
     <TextView
         android:id="@+id/music_name"
@@ -18,6 +20,7 @@
         android:maxWidth="150dp"
         android:singleLine="true"
         android:ellipsize="end"
+        android:textColor="@color/colorWhite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

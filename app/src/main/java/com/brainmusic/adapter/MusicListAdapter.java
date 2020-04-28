@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -19,12 +20,15 @@ import androidx.recyclerview.widget.RecyclerView;
 public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.ViewHolder> {
     public List<Music> mMusicList;
     private Context mContext;
+    private int num = 1;
     static class ViewHolder extends RecyclerView.ViewHolder{
         public TextView musicName;
+        public ImageView musicImg;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             this.musicName = itemView.findViewById(R.id.music_name);
+            this.musicImg = itemView.findViewById(R.id.list_img);
         }
     }
 
@@ -47,6 +51,10 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final Music music = mMusicList.get(position);
         holder.musicName.setText(music.getName());
+        //holder.musicImg.setImageDrawable(mContext.getResources().getDrawable(R.drawable.a2));
+        String iconname="a" + num;
+        int resID=mContext.getResources().getIdentifier(iconname, "drawable",  mContext.getPackageName());
+        holder.musicImg.setImageResource(resID);
         holder.musicName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,6 +65,11 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
                 activity.musicName.setText(music.getName());
             }
         });
+        if(this.num <= 25){
+            this.num ++;
+        } else {
+            this.num = 1;
+        }
     }
 
     @Override
