@@ -7,7 +7,13 @@ import android.util.Log;
 
 import com.brainmusic.db.Music;
 
+import org.litepal.LitePal;
+
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -68,5 +74,33 @@ public class DBUtil {
                 addToDatabase(directory + "/" + file, manager);
             }
         }
+    }
+
+    /**
+     * 使用轻松度查询数据库
+     * @return
+     */
+    public List<Music> getMusicWithEasyStatus(){
+        List<Music> res =  LitePal.order("easyStatus desc").limit(8).find(Music.class);
+        List<Music> tmp = LitePal.where("easyStatus = ?","0").limit(2).find(Music.class);
+        if(!tmp.isEmpty()){
+            if(res.isEmpty()) {
+                res.addAll(tmp);
+            }else{
+                for(Music m:tmp){ //判断是否重复
+                    int flag = 0;
+                    for(Music t:res){
+                        if(m.getId() == t.getId()){
+                            flag = 1;
+                            break;
+                        }
+                    }
+                    if(flag!=1){ //没用重复
+                        res.add(m);
+                    }
+                }
+            }
+        }
+        return res;
     }
 }

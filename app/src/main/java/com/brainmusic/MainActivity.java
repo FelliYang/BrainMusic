@@ -97,7 +97,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void showMusicList() {
         adapter.mMusicList.clear();
-        List<Music> list = LitePal.findAll(Music.class);
+        //使用轻松度排序
+        List<Music> list = dbUtil.getMusicWithEasyStatus();
         adapter.mMusicList.addAll(list);
         adapter.notifyDataSetChanged();
     }
