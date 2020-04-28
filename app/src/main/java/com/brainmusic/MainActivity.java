@@ -9,13 +9,16 @@ import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Space;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.brainmusic.adapter.MusicListAdapter;
 import com.brainmusic.custom.MusicPlayer;
+import com.brainmusic.custom.SpaceItemDecoration;
 import com.brainmusic.db.Music;
 import com.brainmusic.util.DBUtil;
 
@@ -42,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initLayout();
         initDataBase(); //初始化数据库
         showMusicList();
-
 //        checkDataBase();//验证数据库是否有效
 
     }
@@ -80,8 +82,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         musicList.setLayoutManager(layoutManager);
         adapter = new MusicListAdapter(new ArrayList<Music>());
+        musicList.addItemDecoration(new SpaceItemDecoration(50));
         musicList.setAdapter(adapter);
-
     }
 
     /**

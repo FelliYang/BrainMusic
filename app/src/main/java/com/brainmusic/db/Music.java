@@ -1,5 +1,7 @@
 package com.brainmusic.db;
 
+import android.content.Context;
+
 import org.litepal.crud.LitePalSupport;
 
 public class Music extends LitePalSupport {
@@ -7,6 +9,8 @@ public class Music extends LitePalSupport {
     String name;
     String path; //歌曲路径
     int easyStatus; //轻松度
+    int img;
+    static int num = 0;
 
     public Music(String name, String path, int easyStatus) {
         this.name = name;
