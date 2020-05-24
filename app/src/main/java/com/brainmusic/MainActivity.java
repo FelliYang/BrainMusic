@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         adapter.mMusicList.clear();
         //使用轻松度排序
         List<Music> list = dbUtil.getMusicWithEasyStatus();
+        list.clear();
         adapter.mMusicList.addAll(list);
         adapter.notifyDataSetChanged();
     }
